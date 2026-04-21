@@ -6,6 +6,7 @@
     <title>Boticário | Maria Vitória - Vendas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
@@ -13,17 +14,15 @@
         .bg-boticario-green { background-color: #004A42; }
         .bg-boticario-dark { background-color: #00302A; }
         .text-boticario-gold { color: #D4AF37; }
-        /* Ajustes mobile */
         @media (max-width: 640px) {
             .card-mobile { padding: 1rem; }
-            .btn-mobile { padding: 0.75rem; font-size: 1rem; }
         }
     </style>
 </head>
 <body class="bg-gray-50">
 
 <div class="flex min-h-screen relative">
-    <!-- Sidebar (colapsível) -->
+    <!-- Sidebar -->
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-boticario-green text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
         <div class="p-5 border-b border-white/10 flex justify-between items-center">
             <div>
@@ -38,10 +37,10 @@
             <button onclick="showTab('simulador')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition text-sm"><i class="ri-calculator-line"></i> Simulador</button>
             <button onclick="showTab('historico')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition text-sm"><i class="ri-history-line"></i> Histórico</button>
         </nav>
-        <div class="p-3 border-t border-white/10 text-[10px] text-white/40 text-center">v2.0 mobile</div>
+        <div class="p-3 border-t border-white/10 text-[10px] text-white/40 text-center">v3.0 com gráficos</div>
     </aside>
 
-    <!-- Conteúdo Principal -->
+    <!-- Conteúdo -->
     <main class="flex-1 overflow-x-hidden">
         <header class="bg-white border-b sticky top-0 z-30 p-3 flex justify-between items-center shadow-sm">
             <button onclick="toggleSidebar()" class="md:hidden text-2xl text-boticario-green"><i class="ri-menu-line"></i></button>
@@ -52,28 +51,46 @@
         </header>
 
         <div class="p-3 md:p-6">
-            <!-- Dashboard -->
+            <!-- DASHBOARD COM GRÁFICOS -->
             <section id="tab-dash" class="tab-content">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <!-- Cards resumo -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-boticario-green">
                         <p class="text-gray-400 text-[11px] font-bold uppercase">Lucro Total</p>
                         <h3 id="dash-lucro-total" class="text-xl font-black text-boticario-green">R$ 0,00</h3>
                     </div>
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-amber-500">
-                        <p class="text-gray-400 text-[11px] font-bold uppercase">Lucro neste Mês</p>
-                        <h3 id="dash-lucro-mes" class="text-xl font-black text-amber-600">R$ 0,00</h3>
+                        <p class="text-gray-400 text-[11px] font-bold uppercase">Capital Investido</p>
+                        <h3 id="dash-capital-investido" class="text-xl font-black text-amber-600">R$ 0,00</h3>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-blue-500">
+                        <p class="text-gray-400 text-[11px] font-bold uppercase">Margem Média</p>
+                        <h3 id="dash-margem-media" class="text-xl font-black text-blue-700">0%</h3>
                     </div>
                     <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-gray-800">
                         <p class="text-gray-400 text-[11px] font-bold uppercase">Total de Vendas</p>
                         <h3 id="dash-vendas-count" class="text-xl font-black text-gray-800">0</h3>
                     </div>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm text-sm">
-                    <span class="font-bold text-boticario-green">💡 Capital para reinvestir = Lucro acumulado</span>
+
+                <!-- Gráficos em grid responsivo -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <h3 class="font-bold text-boticario-green mb-3 text-center">📊 Capital Investido vs Lucro Total</h3>
+                        <canvas id="chartInvestLucro" height="200"></canvas>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm">
+                        <h3 class="font-bold text-boticario-green mb-3 text-center">📈 Lucro Mensal (últimos 6 meses)</h3>
+                        <canvas id="chartLucroMensal" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm">
+                    <h3 class="font-bold text-boticario-green mb-3 text-center">🏆 Top 5 Produtos Mais Vendidos</h3>
+                    <canvas id="chartTopProdutos" height="250"></canvas>
                 </div>
             </section>
 
-            <!-- Catálogo (sem estoque) -->
+            <!-- Catálogo, Simulador e Histórico (idênticos à versão anterior) -->
             <section id="tab-catalogo" class="tab-content hidden">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                     <h2 class="text-xl font-bold text-boticario-green">📦 Catálogo</h2>
@@ -89,7 +106,6 @@
                 </div>
             </section>
 
-            <!-- Simulador -->
             <section id="tab-simulador" class="tab-content hidden">
                 <div class="max-w-2xl mx-auto bg-white p-5 rounded-2xl shadow-lg border">
                     <h2 class="text-xl font-bold text-boticario-green mb-4">💰 Simular Venda</h2>
@@ -116,7 +132,6 @@
                 </div>
             </section>
 
-            <!-- Histórico (mobile friendly) -->
             <section id="tab-historico" class="tab-content hidden">
                 <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
                     <h2 class="text-xl font-bold text-boticario-green">📜 Histórico</h2>
@@ -142,7 +157,7 @@
     </div>
 </div>
 
-<!-- Modal Venda com DATA MANUAL -->
+<!-- Modal Venda com Data -->
 <div id="modal-venda" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white w-full max-w-md p-5 rounded-2xl relative">
         <button onclick="toggleModal('modal-venda')" class="absolute top-3 right-3 text-gray-400 text-2xl">&times;</button>
@@ -160,13 +175,15 @@
 </div>
 
 <script>
-    // ================= CONFIGURAÇÃO SUPABASE (SUAS CREDENCIAIS) =================
+    // ================= CONFIGURAÇÃO SUPABASE =================
     const SUPABASE_URL = 'https://asuxhaurconeigaurqqr.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_pR7Wszc24UxF6hO7fNH4tQ_1iV95lbB';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let produtosGlobal = [];
+    let charts = {}; // armazenar instâncias para destruir antes de recriar
 
+    // Utilitários
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
     function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
 
@@ -176,28 +193,94 @@
         if (tabId === 'catalogo') carregarCatalogo();
         if (tabId === 'simulador') popularSelectSimulador();
         if (tabId === 'historico') carregarHistoricoMobile();
-        if (tabId === 'dash') carregarDashboard();
+        if (tabId === 'dash') { carregarDashboard(); carregarGraficos(); }
         if (window.innerWidth < 768) document.getElementById('sidebar').classList.add('-translate-x-full');
     }
 
-    // Dashboard
+    // Dashboard e gráficos
     async function carregarDashboard() {
-        const { data: vendas } = await supabaseClient.from('vendas').select('lucro_liquido, data_venda');
-        let lucroTotal = 0, lucroMes = 0;
+        const { data: vendas, error } = await supabaseClient.from('vendas').select('lucro_liquido, custo_unitario, quantidade, data_venda');
+        if (error) return console.error(error);
+        let lucroTotal = 0, capitalInvestido = 0;
         const agora = new Date();
         const mesAtual = agora.getMonth();
         const anoAtual = agora.getFullYear();
+        let lucroMes = 0;
         vendas?.forEach(v => {
             lucroTotal += v.lucro_liquido;
+            capitalInvestido += (v.custo_unitario * v.quantidade);
             const dataVenda = new Date(v.data_venda);
             if (dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual) lucroMes += v.lucro_liquido;
         });
+        const margemMedia = (lucroTotal / (capitalInvestido + lucroTotal)) * 100 || 0;
         document.getElementById('dash-lucro-total').innerText = `R$ ${lucroTotal.toFixed(2)}`;
-        document.getElementById('dash-lucro-mes').innerText = `R$ ${lucroMes.toFixed(2)}`;
+        document.getElementById('dash-capital-investido').innerText = `R$ ${capitalInvestido.toFixed(2)}`;
+        document.getElementById('dash-margem-media').innerText = `${margemMedia.toFixed(1)}%`;
         document.getElementById('dash-vendas-count').innerText = vendas?.length || 0;
     }
 
-    // Catálogo
+    async function carregarGraficos() {
+        // Buscar dados necessários
+        const { data: vendas } = await supabaseClient.from('vendas').select('lucro_liquido, custo_unitario, quantidade, data_venda, produtos(nome)');
+        if (!vendas) return;
+
+        // 1. Capital Investido vs Lucro Total
+        let capitalTotal = 0, lucroTotal = 0;
+        vendas.forEach(v => {
+            capitalTotal += v.custo_unitario * v.quantidade;
+            lucroTotal += v.lucro_liquido;
+        });
+        if (charts.investLucro) charts.investLucro.destroy();
+        const ctx1 = document.getElementById('chartInvestLucro').getContext('2d');
+        charts.investLucro = new Chart(ctx1, {
+            type: 'bar',
+            data: { labels: ['Capital Investido', 'Lucro Total'], datasets: [{ label: 'Valor (R$)', data: [capitalTotal, lucroTotal], backgroundColor: ['#004A42', '#D4AF37'] }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top' } } }
+        });
+
+        // 2. Lucro Mensal (últimos 6 meses)
+        const meses = [];
+        const lucroPorMes = {};
+        const hoje = new Date();
+        for (let i = 5; i >= 0; i--) {
+            const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+            const key = `${d.getFullYear()}-${d.getMonth()+1}`;
+            meses.push(d.toLocaleString('default', { month: 'short' }) + '/' + d.getFullYear().toString().slice(-2));
+            lucroPorMes[key] = 0;
+        }
+        vendas.forEach(v => {
+            const data = new Date(v.data_venda);
+            const key = `${data.getFullYear()}-${data.getMonth()+1}`;
+            if (lucroPorMes.hasOwnProperty(key)) lucroPorMes[key] += v.lucro_liquido;
+        });
+        const valoresMensais = Object.values(lucroPorMes);
+        if (charts.lucroMensal) charts.lucroMensal.destroy();
+        const ctx2 = document.getElementById('chartLucroMensal').getContext('2d');
+        charts.lucroMensal = new Chart(ctx2, {
+            type: 'line',
+            data: { labels: meses, datasets: [{ label: 'Lucro (R$)', data: valoresMensais, borderColor: '#004A42', tension: 0.2, fill: false }] },
+            options: { responsive: true, maintainAspectRatio: true }
+        });
+
+        // 3. Top 5 produtos mais vendidos (por quantidade)
+        const vendasPorProduto = {};
+        for (const v of vendas) {
+            const nomeProd = v.produtos?.nome || 'Produto removido';
+            vendasPorProduto[nomeProd] = (vendasPorProduto[nomeProd] || 0) + v.quantidade;
+        }
+        const sorted = Object.entries(vendasPorProduto).sort((a,b) => b[1] - a[1]).slice(0,5);
+        const labelsTop = sorted.map(item => item[0]);
+        const dataTop = sorted.map(item => item[1]);
+        if (charts.topProdutos) charts.topProdutos.destroy();
+        const ctx3 = document.getElementById('chartTopProdutos').getContext('2d');
+        charts.topProdutos = new Chart(ctx3, {
+            type: 'bar',
+            data: { labels: labelsTop, datasets: [{ label: 'Quantidade vendida', data: dataTop, backgroundColor: '#D4AF37' }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: true }
+        });
+    }
+
+    // Catálogo (igual ao anterior, sem estoque)
     async function carregarCatalogo() {
         const { data, error } = await supabaseClient.from('produtos').select('*').order('nome');
         if (error) return alert('Erro ao carregar catálogo');
@@ -227,7 +310,7 @@
         document.getElementById('new-venda').value = '';
     }
 
-    async function excluirProduto(id) { if(confirm('Remover?')) await supabaseClient.from('produtos').delete().eq('id', id); carregarCatalogo(); carregarDashboard(); }
+    async function excluirProduto(id) { if(confirm('Remover?')) await supabaseClient.from('produtos').delete().eq('id', id); carregarCatalogo(); carregarDashboard(); carregarGraficos(); }
 
     // Simulador
     function popularSelectSimulador() {
@@ -255,7 +338,7 @@
         document.getElementById('venda-confirm-nome').innerText = `${produto.nome} (${quantidade} un)`;
     }
 
-    // Registrar Venda com DATA escolhida
+    // Registrar Venda
     async function executarVenda() {
         const produtoId = document.getElementById('sim-produto').value;
         if (!produtoId) return alert('Selecione um produto');
@@ -268,7 +351,7 @@
         const lucroLiq = parseFloat(document.getElementById('res-lucro').innerText.replace('R$', '').replace(',', '.'));
         const formaPagamento = document.getElementById('sim-parcelas').selectedOptions[0].innerText;
         let dataVenda = document.getElementById('data-venda').value;
-        if (!dataVenda) dataVenda = new Date().toISOString().split('T')[0]; // hoje
+        if (!dataVenda) dataVenda = new Date().toISOString().split('T')[0];
         const dataISO = new Date(dataVenda).toISOString();
 
         const { error } = await supabaseClient.from('vendas').insert([{
@@ -286,6 +369,7 @@
         alert('Venda registrada!');
         toggleModal('modal-venda');
         carregarDashboard();
+        carregarGraficos();
         carregarHistoricoMobile();
         document.getElementById('cli-nome').value = '';
         document.getElementById('cli-tel').value = '';
@@ -296,7 +380,7 @@
         atualizarSimulacao();
     }
 
-    // Histórico em cards (mobile)
+    // Histórico mobile
     async function carregarHistoricoMobile() {
         let query = supabaseClient.from('vendas').select('*, produtos(nome)').order('data_venda', { ascending: false });
         const filtroMes = document.getElementById('filtro-mes').value;
@@ -313,7 +397,7 @@
         container.innerHTML = data.map(v => `
             <div class="bg-white p-4 rounded-xl shadow-sm border">
                 <div class="flex justify-between text-sm"><span class="font-bold text-boticario-green">${new Date(v.data_venda).toLocaleDateString()}</span><span class="text-xs bg-gray-100 px-2 py-1 rounded-full">${v.forma_pagamento}</span></div>
-                <div class="mt-2"><span class="font-semibold">${v.cliente_nome}</span><br><span class="text-sm">${v.produtos?.nome || 'Produto'}</span></div>
+                <div class="mt-2"><span class="font-semibold">${v.cliente_nome}</span><br><span class="text-sm">${v.produtos?.nome || 'Produto removido'}</span></div>
                 <div class="flex justify-between mt-2 text-sm"><span>Valor: R$ ${v.valor_pago.toFixed(2)}</span><span class="text-green-600 font-bold">Lucro: R$ ${v.lucro_liquido.toFixed(2)}</span></div>
             </div>
         `).join('');
