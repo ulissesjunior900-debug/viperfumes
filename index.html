@@ -2,8 +2,8 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boticário | Maria Vitória - Controle de Vendas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Boticário | Maria Vitória - Vendas</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
@@ -13,163 +13,128 @@
         .bg-boticario-green { background-color: #004A42; }
         .bg-boticario-dark { background-color: #00302A; }
         .text-boticario-gold { color: #D4AF37; }
-        .border-boticario-gold { border-color: #D4AF37; }
-        .focus\:ring-boticario-green:focus { --tw-ring-color: #004A42; }
+        /* Ajustes mobile */
+        @media (max-width: 640px) {
+            .card-mobile { padding: 1rem; }
+            .btn-mobile { padding: 0.75rem; font-size: 1rem; }
+        }
     </style>
 </head>
 <body class="bg-gray-50">
 
 <div class="flex min-h-screen relative">
-    <!-- Sidebar -->
-    <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-40 w-64 bg-boticario-green text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
-        <div class="p-6 border-b border-white/10 flex justify-between items-center">
+    <!-- Sidebar (colapsível) -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-40 w-64 bg-boticario-green text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
+        <div class="p-5 border-b border-white/10 flex justify-between items-center">
             <div>
-                <h1 class="text-xl font-black uppercase text-boticario-gold">Maria Vitória</h1>
-                <p class="text-[10px] tracking-widest text-white/70">REVENDEDORA BOTICÁRIO</p>
+                <h1 class="text-lg font-black uppercase text-boticario-gold">Maria Vitória</h1>
+                <p class="text-[9px] tracking-widest text-white/70">BOTICÁRIO</p>
             </div>
             <button onclick="toggleSidebar()" class="md:hidden text-white text-2xl">&times;</button>
         </div>
-        <nav class="flex-1 px-4 py-6 space-y-2">
-            <button onclick="showTab('dash')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition"><i class="ri-dashboard-line text-lg"></i> Dashboard</button>
-            <button onclick="showTab('catalogo')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition"><i class="ri-book-open-line"></i> Catálogo</button>
-            <button onclick="showTab('simulador')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition"><i class="ri-calculator-line"></i> Simulador de Venda</button>
-            <button onclick="showTab('historico')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition"><i class="ri-history-line"></i> Histórico</button>
+        <nav class="flex-1 px-3 py-5 space-y-1">
+            <button onclick="showTab('dash')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition text-sm"><i class="ri-dashboard-line text-lg"></i> Dashboard</button>
+            <button onclick="showTab('catalogo')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition text-sm"><i class="ri-book-open-line"></i> Catálogo</button>
+            <button onclick="showTab('simulador')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition text-sm"><i class="ri-calculator-line"></i> Simulador</button>
+            <button onclick="showTab('historico')" class="nav-btn w-full flex items-center gap-3 p-3 rounded-lg hover:bg-boticario-dark transition text-sm"><i class="ri-history-line"></i> Histórico</button>
         </nav>
-        <div class="p-4 border-t border-white/10 text-xs text-white/50 text-center">Sistema profissional v2.0</div>
+        <div class="p-3 border-t border-white/10 text-[10px] text-white/40 text-center">v2.0 mobile</div>
     </aside>
 
     <!-- Conteúdo Principal -->
     <main class="flex-1 overflow-x-hidden">
-        <header class="bg-white border-b sticky top-0 z-30 p-4 flex justify-between items-center shadow-sm">
+        <header class="bg-white border-b sticky top-0 z-30 p-3 flex justify-between items-center shadow-sm">
             <button onclick="toggleSidebar()" class="md:hidden text-2xl text-boticario-green"><i class="ri-menu-line"></i></button>
-            <span class="text-gray-500">Bem-vinda, <strong class="text-boticario-green font-bold text-lg">Maria Vitória</strong></span>
-            <div class="flex items-center gap-3">
-                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">PERNAMBUCO</span>
-                <i class="ri-notification-3-line text-gray-400 text-xl"></i>
+            <span class="text-sm text-gray-500">Olá, <strong class="text-boticario-green">Maria</strong></span>
+            <div class="flex items-center gap-2">
+                <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-1 rounded-full">PE</span>
             </div>
         </header>
 
-        <div class="p-4 md:p-8">
-            <!-- Aba Dashboard -->
+        <div class="p-3 md:p-6">
+            <!-- Dashboard -->
             <section id="tab-dash" class="tab-content">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-boticario-green">
-                        <p class="text-gray-400 text-xs font-bold uppercase mb-1">Lucro Total (Geral)</p>
-                        <h3 id="dash-lucro-total" class="text-2xl font-black text-boticario-green">R$ 0,00</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-boticario-green">
+                        <p class="text-gray-400 text-[11px] font-bold uppercase">Lucro Total</p>
+                        <h3 id="dash-lucro-total" class="text-xl font-black text-boticario-green">R$ 0,00</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-amber-500">
-                        <p class="text-gray-400 text-xs font-bold uppercase mb-1">Lucro neste Mês</p>
-                        <h3 id="dash-lucro-mes" class="text-2xl font-black text-amber-600">R$ 0,00</h3>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-amber-500">
+                        <p class="text-gray-400 text-[11px] font-bold uppercase">Lucro neste Mês</p>
+                        <h3 id="dash-lucro-mes" class="text-xl font-black text-amber-600">R$ 0,00</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-gray-800">
-                        <p class="text-gray-400 text-xs font-bold uppercase mb-1">Total de Vendas</p>
-                        <h3 id="dash-vendas-count" class="text-2xl font-black text-gray-800">0</h3>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-l-gray-800">
+                        <p class="text-gray-400 text-[11px] font-bold uppercase">Total de Vendas</p>
+                        <h3 id="dash-vendas-count" class="text-xl font-black text-gray-800">0</h3>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm">
-                    <h3 class="font-bold text-boticario-green mb-2">💡 Capital para reinvestir</h3>
-                    <p class="text-gray-600">Seu lucro acumulado é o recurso disponível para comprar novos produtos diretamente na loja. <strong>Mantenha o controle!</strong></p>
+                <div class="bg-white p-4 rounded-xl shadow-sm text-sm">
+                    <span class="font-bold text-boticario-green">💡 Capital para reinvestir = Lucro acumulado</span>
                 </div>
             </section>
 
-            <!-- Aba Catálogo (sem estoque) -->
+            <!-- Catálogo (sem estoque) -->
             <section id="tab-catalogo" class="tab-content hidden">
-                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold text-boticario-green">📦 Meus Produtos</h2>
-                    <button onclick="toggleModal('modal-produto')" class="bg-boticario-green text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-boticario-dark transition flex items-center gap-2"><i class="ri-add-line"></i> Novo Produto</button>
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                    <h2 class="text-xl font-bold text-boticario-green">📦 Catálogo</h2>
+                    <button onclick="toggleModal('modal-produto')" class="bg-boticario-green text-white px-4 py-2 rounded-full text-sm font-bold shadow">+ Novo</button>
                 </div>
-                <div class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
-                    <table class="w-full text-left min-w-[500px]">
-                        <thead class="bg-gray-50 border-b">
-                            <tr>
-                                <th class="p-4 text-xs font-bold text-gray-500 uppercase">Produto</th>
-                                <th class="p-4 text-xs font-bold text-gray-500 uppercase">Custo (R$)</th>
-                                <th class="p-4 text-xs font-bold text-gray-500 uppercase">Venda Sugerida</th>
-                                <th class="p-4 text-xs font-bold text-gray-500 uppercase">Ações</th>
-                            </tr>
+                <div class="bg-white rounded-xl shadow-sm border overflow-x-auto">
+                    <table class="w-full text-left min-w-[400px] text-sm">
+                        <thead class="bg-gray-50">
+                            <tr><th class="p-3">Produto</th><th>Custo</th><th>Venda</th><th></th></tr>
                         </thead>
                         <tbody id="lista-catalogo"></tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- Aba Simulador -->
+            <!-- Simulador -->
             <section id="tab-simulador" class="tab-content hidden">
-                <div class="max-w-3xl mx-auto bg-white p-6 md:p-8 rounded-3xl shadow-xl border">
-                    <h2 class="text-2xl font-bold text-boticario-green mb-6 flex items-center gap-2"><i class="ri-magic-line text-boticario-gold"></i> Simular Venda</h2>
-                    <div class="space-y-5">
-                        <div>
-                            <label class="block text-xs font-black text-gray-400 uppercase mb-1">Produto</label>
-                            <select id="sim-produto" onchange="atualizarSimulacao()" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200 focus:ring-2 focus:ring-boticario-green"></select>
+                <div class="max-w-2xl mx-auto bg-white p-5 rounded-2xl shadow-lg border">
+                    <h2 class="text-xl font-bold text-boticario-green mb-4">💰 Simular Venda</h2>
+                    <div class="space-y-4">
+                        <select id="sim-produto" onchange="atualizarSimulacao()" class="w-full p-3 bg-gray-50 rounded-xl border text-sm"></select>
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="number" id="sim-venda" placeholder="Valor cobrado (R$)" oninput="atualizarSimulacao()" class="p-3 bg-gray-50 rounded-xl border text-sm">
+                            <input type="number" id="sim-quantidade" value="1" min="1" oninput="atualizarSimulacao()" class="p-3 bg-gray-50 rounded-xl border text-sm">
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase mb-1">Valor cobrado (R$)</label>
-                                <input type="number" id="sim-venda" oninput="atualizarSimulacao()" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase mb-1">Quantidade</label>
-                                <input type="number" id="sim-quantidade" value="1" min="1" oninput="atualizarSimulacao()" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase mb-1">Pagamento</label>
-                                <select id="sim-parcelas" onchange="atualizarSimulacao()" class="w-full p-3 bg-gray-50 rounded-xl border border-gray-200">
-                                    <option value="1">À vista (Pix/Dinheiro)</option>
-                                    <option value="1.05">1x Cartão (taxa 5%)</option>
-                                    <option value="1.08">2x Cartão (taxa 8%)</option>
-                                    <option value="1.10">3x Cartão (taxa 10%)</option>
-                                    <option value="1.15">6x Cartão (taxa 15%)</option>
-                                </select>
-                            </div>
+                        <select id="sim-parcelas" onchange="atualizarSimulacao()" class="w-full p-3 bg-gray-50 rounded-xl border text-sm">
+                            <option value="1">À vista (Pix/Dinheiro)</option>
+                            <option value="1.05">1x Cartão (5%)</option>
+                            <option value="1.08">2x Cartão (8%)</option>
+                            <option value="1.10">3x Cartão (10%)</option>
+                            <option value="1.15">6x Cartão (15%)</option>
+                        </select>
+                        <div class="bg-emerald-50 p-4 rounded-xl space-y-1 text-sm">
+                            <div class="flex justify-between"><span>Custo:</span><span id="res-custo" class="font-bold">R$ 0,00</span></div>
+                            <div class="flex justify-between"><span>Taxa cartão:</span><span id="res-taxa">R$ 0,00</span></div>
+                            <div class="flex justify-between text-base font-bold"><span>Lucro líquido:</span><span id="res-lucro" class="text-boticario-green">R$ 0,00</span></div>
                         </div>
-
-                        <div id="resultado-sim" class="bg-emerald-50 p-5 rounded-2xl space-y-2 border border-emerald-200">
-                            <div class="flex justify-between text-emerald-800"><span>💸 Custo do(s) produto(s):</span><span id="res-custo" class="font-bold">R$ 0,00</span></div>
-                            <div class="flex justify-between text-emerald-800"><span>🏦 Taxa cartão (já descontada):</span><span id="res-taxa" class="font-bold">R$ 0,00</span></div>
-                            <div class="flex justify-between text-lg pt-2 border-t border-emerald-200"><span class="font-bold text-boticario-green">✅ Seu lucro líquido:</span><span id="res-lucro" class="font-black text-boticario-green text-xl">R$ 0,00</span></div>
-                        </div>
-
-                        <button onclick="toggleModal('modal-venda')" class="w-full bg-boticario-green text-white p-4 rounded-xl font-black uppercase tracking-wider hover:bg-boticario-dark transition shadow-lg">Confirmar Venda</button>
+                        <button onclick="toggleModal('modal-venda')" class="w-full bg-boticario-green text-white p-4 rounded-xl font-bold">Confirmar Venda</button>
                     </div>
                 </div>
             </section>
 
-            <!-- Aba Histórico -->
+            <!-- Histórico (mobile friendly) -->
             <section id="tab-historico" class="tab-content hidden">
-                <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
-                    <h2 class="text-2xl font-bold text-boticario-green">📜 Histórico de Vendas</h2>
-                    <div>
-                        <label class="text-sm text-gray-500">Filtrar mês: </label>
-                        <input type="month" id="filtro-mes" class="p-2 border rounded-xl text-sm">
-                    </div>
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
+                    <h2 class="text-xl font-bold text-boticario-green">📜 Histórico</h2>
+                    <input type="month" id="filtro-mes" class="p-2 border rounded-xl text-sm">
                 </div>
-                <div class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
-                    <table class="w-full min-w-[700px] text-left">
-                        <thead class="bg-gray-50 border-b">
-                            <tr>
-                                <th class="p-4 text-xs font-bold text-gray-500">Data</th>
-                                <th class="p-4 text-xs font-bold text-gray-500">Cliente</th>
-                                <th class="p-4 text-xs font-bold text-gray-500">Produto</th>
-                                <th class="p-4 text-xs font-bold text-gray-500">Valor Venda</th>
-                                <th class="p-4 text-xs font-bold text-gray-500">Lucro</th>
-                                <th class="p-4 text-xs font-bold text-gray-500">Pagamento</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lista-vendas"></tbody>
-                    </table>
-                </div>
+                <div id="lista-vendas-mobile" class="space-y-3"></div>
             </section>
         </div>
     </main>
 </div>
 
-<!-- Modal Novo Produto (sem estoque) -->
+<!-- Modal Produto -->
 <div id="modal-produto" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white w-full max-w-md p-6 rounded-3xl">
-        <h3 class="text-xl font-bold text-boticario-green mb-4">➕ Adicionar ao Catálogo</h3>
-        <input type="text" id="new-nome" placeholder="Nome do produto (ex: Malbec 100ml)" class="w-full p-3 border rounded-xl mb-3">
-        <input type="number" id="new-custo" placeholder="Preço de custo (R$)" class="w-full p-3 border rounded-xl mb-3">
-        <input type="number" id="new-venda" placeholder="Preço de venda sugerido (R$)" class="w-full p-3 border rounded-xl mb-5">
+    <div class="bg-white w-full max-w-md p-5 rounded-2xl">
+        <h3 class="text-lg font-bold text-boticario-green mb-3">Novo Produto</h3>
+        <input type="text" id="new-nome" placeholder="Nome" class="w-full p-3 border rounded-xl mb-2 text-sm">
+        <input type="number" id="new-custo" placeholder="Custo (R$)" class="w-full p-3 border rounded-xl mb-2 text-sm">
+        <input type="number" id="new-venda" placeholder="Preço venda (R$)" class="w-full p-3 border rounded-xl mb-4 text-sm">
         <div class="flex gap-3">
             <button onclick="salvarProduto()" class="flex-1 bg-boticario-green text-white p-3 rounded-xl font-bold">Salvar</button>
             <button onclick="toggleModal('modal-produto')" class="flex-1 bg-gray-100 p-3 rounded-xl">Cancelar</button>
@@ -177,88 +142,74 @@
     </div>
 </div>
 
-<!-- Modal Dados do Cliente com botão SAIR -->
+<!-- Modal Venda com DATA MANUAL -->
 <div id="modal-venda" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white w-full max-w-md p-6 rounded-3xl relative">
-        <!-- Botão X para fechar -->
-        <button onclick="toggleModal('modal-venda')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
-        <h3 class="text-xl font-bold text-boticario-green">🧾 Finalizar Venda</h3>
-        <p class="text-sm text-gray-500 mb-4">Produto: <span id="venda-confirm-nome" class="font-semibold"></span></p>
-        <input type="text" id="cli-nome" placeholder="Nome completo do cliente" class="w-full p-3 border rounded-xl mb-3">
-        <input type="text" id="cli-tel" placeholder="WhatsApp (opcional)" class="w-full p-3 border rounded-xl mb-5">
+    <div class="bg-white w-full max-w-md p-5 rounded-2xl relative">
+        <button onclick="toggleModal('modal-venda')" class="absolute top-3 right-3 text-gray-400 text-2xl">&times;</button>
+        <h3 class="text-lg font-bold text-boticario-green mb-2">Finalizar Venda</h3>
+        <p class="text-sm text-gray-500 mb-3">Produto: <span id="venda-confirm-nome" class="font-semibold"></span></p>
+        <input type="text" id="cli-nome" placeholder="Nome do cliente" class="w-full p-3 border rounded-xl mb-2 text-sm">
+        <input type="text" id="cli-tel" placeholder="WhatsApp" class="w-full p-3 border rounded-xl mb-2 text-sm">
+        <label class="block text-xs text-gray-500 mt-2 mb-1">Data da venda</label>
+        <input type="date" id="data-venda" class="w-full p-3 border rounded-xl mb-4 text-sm">
         <div class="flex gap-3">
-            <button onclick="executarVenda()" class="flex-1 bg-boticario-green text-white p-3 rounded-xl font-bold">Registrar Venda</button>
+            <button onclick="executarVenda()" class="flex-1 bg-boticario-green text-white p-3 rounded-xl font-bold">Registrar</button>
             <button onclick="toggleModal('modal-venda')" class="flex-1 bg-gray-100 p-3 rounded-xl font-bold">Sair</button>
         </div>
     </div>
 </div>
 
 <script>
-    // ================= CONFIGURAÇÃO SUPABASE =================
+    // ================= CONFIGURAÇÃO SUPABASE (SUAS CREDENCIAIS) =================
     const SUPABASE_URL = 'https://asuxhaurconeigaurqqr.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_pR7Wszc24UxF6hO7fNH4tQ_1iV95lbB';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let produtosGlobal = [];
 
-    // Utilitários
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('-translate-x-full');
-    }
-
-    function toggleModal(id) {
-        document.getElementById(id).classList.toggle('hidden');
-    }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
+    function toggleModal(id) { document.getElementById(id).classList.toggle('hidden'); }
 
     function showTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         document.getElementById(`tab-${tabId}`).classList.remove('hidden');
         if (tabId === 'catalogo') carregarCatalogo();
         if (tabId === 'simulador') popularSelectSimulador();
-        if (tabId === 'historico') carregarHistorico();
+        if (tabId === 'historico') carregarHistoricoMobile();
         if (tabId === 'dash') carregarDashboard();
+        if (window.innerWidth < 768) document.getElementById('sidebar').classList.add('-translate-x-full');
     }
 
-    // ========== DASHBOARD ==========
+    // Dashboard
     async function carregarDashboard() {
         const { data: vendas } = await supabaseClient.from('vendas').select('lucro_liquido, data_venda');
-        
         let lucroTotal = 0, lucroMes = 0;
         const agora = new Date();
         const mesAtual = agora.getMonth();
         const anoAtual = agora.getFullYear();
-
         vendas?.forEach(v => {
             lucroTotal += v.lucro_liquido;
             const dataVenda = new Date(v.data_venda);
-            if (dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual) {
-                lucroMes += v.lucro_liquido;
-            }
+            if (dataVenda.getMonth() === mesAtual && dataVenda.getFullYear() === anoAtual) lucroMes += v.lucro_liquido;
         });
-
         document.getElementById('dash-lucro-total').innerText = `R$ ${lucroTotal.toFixed(2)}`;
         document.getElementById('dash-lucro-mes').innerText = `R$ ${lucroMes.toFixed(2)}`;
         document.getElementById('dash-vendas-count').innerText = vendas?.length || 0;
     }
 
-    // ========== CATÁLOGO (sem estoque) ==========
+    // Catálogo
     async function carregarCatalogo() {
         const { data, error } = await supabaseClient.from('produtos').select('*').order('nome');
         if (error) return alert('Erro ao carregar catálogo');
         produtosGlobal = data;
         const tbody = document.getElementById('lista-catalogo');
-        if (!produtosGlobal.length) {
-            tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Nenhum produto cadastrado. Clique em "Novo Produto"</td></tr>';
-            return;
-        }
+        if (!produtosGlobal.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center">Nenhum produto</td></tr>'; return; }
         tbody.innerHTML = produtosGlobal.map(p => `
-            <tr class="border-b hover:bg-gray-50">
-                <td class="p-4 font-semibold text-boticario-green">${p.nome}</td>
-                <td class="p-4">R$ ${p.preco_custo.toFixed(2)}</td>
-                <td class="p-4">R$ ${p.preco_venda_sugerido.toFixed(2)}</td>
-                <td class="p-4">
-                    <button onclick="excluirProduto(${p.id})" class="text-red-500 hover:text-red-700"><i class="ri-delete-bin-line"></i></button>
-                </td>
+            <tr class="border-b">
+                <td class="p-3 font-semibold">${p.nome}</td>
+                <td>R$ ${p.preco_custo.toFixed(2)}</td>
+                <td>R$ ${p.preco_venda_sugerido.toFixed(2)}</td>
+                <td><button onclick="excluirProduto(${p.id})" class="text-red-500"><i class="ri-delete-bin-line"></i></button></td>
             </tr>
         `).join('');
     }
@@ -267,108 +218,86 @@
         const nome = document.getElementById('new-nome').value.trim();
         const custo = parseFloat(document.getElementById('new-custo').value);
         const venda = parseFloat(document.getElementById('new-venda').value);
-        if (!nome || isNaN(custo) || isNaN(venda)) return alert('Preencha todos os campos corretamente.');
-        
-        const { error } = await supabaseClient.from('produtos').insert([{
-            nome, preco_custo: custo, preco_venda_sugerido: venda
-        }]);
-        if (error) return alert('Erro ao salvar: ' + error.message);
+        if (!nome || isNaN(custo) || isNaN(venda)) return alert('Preencha todos os campos.');
+        await supabaseClient.from('produtos').insert([{ nome, preco_custo: custo, preco_venda_sugerido: venda }]);
         toggleModal('modal-produto');
         carregarCatalogo();
-        carregarDashboard();
         document.getElementById('new-nome').value = '';
         document.getElementById('new-custo').value = '';
         document.getElementById('new-venda').value = '';
     }
 
-    async function excluirProduto(id) {
-        if (!confirm('Remover produto permanentemente?')) return;
-        await supabaseClient.from('produtos').delete().eq('id', id);
-        carregarCatalogo();
-        carregarDashboard();
-    }
+    async function excluirProduto(id) { if(confirm('Remover?')) await supabaseClient.from('produtos').delete().eq('id', id); carregarCatalogo(); carregarDashboard(); }
 
-    // ========== SIMULADOR ==========
+    // Simulador
     function popularSelectSimulador() {
         const select = document.getElementById('sim-produto');
-        if (!produtosGlobal.length) {
-            select.innerHTML = '<option value="">Cadastre produtos no catálogo primeiro</option>';
-            return;
-        }
-        select.innerHTML = '<option value="">-- Selecione --</option>' + 
-            produtosGlobal.map(p => `<option value="${p.id}">${p.nome} (custo R$ ${p.preco_custo.toFixed(2)})</option>`).join('');
+        if (!produtosGlobal.length) { select.innerHTML = '<option>Cadastre produtos</option>'; return; }
+        select.innerHTML = '<option value="">-- Selecione --</option>' + produtosGlobal.map(p => `<option value="${p.id}">${p.nome} (R$ ${p.preco_custo})</option>`).join('');
         atualizarSimulacao();
     }
 
     function atualizarSimulacao() {
         const produtoId = document.getElementById('sim-produto').value;
-        if (!produtoId) {
-            document.getElementById('res-custo').innerText = 'R$ 0,00';
-            document.getElementById('res-taxa').innerText = 'R$ 0,00';
-            document.getElementById('res-lucro').innerText = 'R$ 0,00';
-            return;
-        }
+        if (!produtoId) { document.getElementById('res-custo').innerText = 'R$ 0,00'; document.getElementById('res-taxa').innerText = 'R$ 0,00'; document.getElementById('res-lucro').innerText = 'R$ 0,00'; return; }
         const produto = produtosGlobal.find(p => p.id == produtoId);
-        if (!produto) return;
         const quantidade = parseInt(document.getElementById('sim-quantidade').value) || 1;
         const valorCobrado = parseFloat(document.getElementById('sim-venda').value) || 0;
         const fatorTaxa = parseFloat(document.getElementById('sim-parcelas').value);
-        
         const custoTotal = produto.preco_custo * quantidade;
         const valorBruto = valorCobrado * quantidade;
         const valorLiquido = valorBruto / fatorTaxa;
         const taxaDesconto = valorBruto - valorLiquido;
         const lucro = valorLiquido - custoTotal;
-
         document.getElementById('res-custo').innerText = `R$ ${custoTotal.toFixed(2)}`;
         document.getElementById('res-taxa').innerText = `R$ ${taxaDesconto.toFixed(2)}`;
         document.getElementById('res-lucro').innerText = `R$ ${lucro.toFixed(2)}`;
         document.getElementById('venda-confirm-nome').innerText = `${produto.nome} (${quantidade} un)`;
     }
 
-    // ========== VENDA (sem verificação de estoque) ==========
+    // Registrar Venda com DATA escolhida
     async function executarVenda() {
         const produtoId = document.getElementById('sim-produto').value;
         if (!produtoId) return alert('Selecione um produto');
         const clienteNome = document.getElementById('cli-nome').value.trim();
-        if (!clienteNome) return alert('Informe o nome do cliente');
-        
+        if (!clienteNome) return alert('Nome do cliente é obrigatório');
         const produto = produtosGlobal.find(p => p.id == produtoId);
         const quantidade = parseInt(document.getElementById('sim-quantidade').value);
         const valorPago = parseFloat(document.getElementById('sim-venda').value) * quantidade;
         const custoUnitario = produto.preco_custo;
-        const lucroLiq = parseFloat(document.getElementById('res-lucro').innerText.replace('R$ ', '').replace(',', '.'));
+        const lucroLiq = parseFloat(document.getElementById('res-lucro').innerText.replace('R$', '').replace(',', '.'));
         const formaPagamento = document.getElementById('sim-parcelas').selectedOptions[0].innerText;
-        
-        // Inserir venda (sem alterar estoque)
-        const { error: vendaError } = await supabaseClient.from('vendas').insert([{
+        let dataVenda = document.getElementById('data-venda').value;
+        if (!dataVenda) dataVenda = new Date().toISOString().split('T')[0]; // hoje
+        const dataISO = new Date(dataVenda).toISOString();
+
+        const { error } = await supabaseClient.from('vendas').insert([{
             produto_id: produtoId,
             cliente_nome: clienteNome,
             cliente_telefone: document.getElementById('cli-tel').value,
-            quantidade: quantidade,
+            quantidade,
             valor_pago: valorPago,
             custo_unitario: custoUnitario,
             lucro_liquido: lucroLiq,
-            forma_pagamento: formaPagamento
+            forma_pagamento: formaPagamento,
+            data_venda: dataISO
         }]);
-        
-        if (vendaError) return alert('Erro ao registrar venda: ' + vendaError.message);
-        
-        alert('Venda registrada com sucesso!');
+        if (error) return alert('Erro: ' + error.message);
+        alert('Venda registrada!');
         toggleModal('modal-venda');
         carregarDashboard();
-        carregarHistorico();
-        // Limpar campos do simulador
+        carregarHistoricoMobile();
         document.getElementById('cli-nome').value = '';
         document.getElementById('cli-tel').value = '';
+        document.getElementById('data-venda').value = '';
         document.getElementById('sim-venda').value = '';
         document.getElementById('sim-quantidade').value = '1';
         document.getElementById('sim-produto').value = '';
         atualizarSimulacao();
     }
 
-    // ========== HISTÓRICO ==========
-    async function carregarHistorico() {
+    // Histórico em cards (mobile)
+    async function carregarHistoricoMobile() {
         let query = supabaseClient.from('vendas').select('*, produtos(nome)').order('data_venda', { ascending: false });
         const filtroMes = document.getElementById('filtro-mes').value;
         if (filtroMes) {
@@ -379,28 +308,19 @@
         }
         const { data, error } = await query;
         if (error) return;
-        const tbody = document.getElementById('lista-vendas');
-        if (!data?.length) {
-            tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Nenhuma venda encontrada</td></tr>';
-            return;
-        }
-        tbody.innerHTML = data.map(v => `
-            <tr class="border-b hover:bg-gray-50">
-                <td class="p-4 text-sm">${new Date(v.data_venda).toLocaleDateString()}</td>
-                <td class="p-4 font-medium">${v.cliente_nome}</td>
-                <td class="p-4">${v.produtos?.nome || 'Produto removido'}</td>
-                <td class="p-4">R$ ${v.valor_pago.toFixed(2)}</td>
-                <td class="p-4 text-green-600 font-semibold">R$ ${v.lucro_liquido.toFixed(2)}</td>
-                <td class="p-4 text-xs">${v.forma_pagamento}</td>
-            </tr>
+        const container = document.getElementById('lista-vendas-mobile');
+        if (!data?.length) { container.innerHTML = '<div class="text-center text-gray-400 p-4">Nenhuma venda</div>'; return; }
+        container.innerHTML = data.map(v => `
+            <div class="bg-white p-4 rounded-xl shadow-sm border">
+                <div class="flex justify-between text-sm"><span class="font-bold text-boticario-green">${new Date(v.data_venda).toLocaleDateString()}</span><span class="text-xs bg-gray-100 px-2 py-1 rounded-full">${v.forma_pagamento}</span></div>
+                <div class="mt-2"><span class="font-semibold">${v.cliente_nome}</span><br><span class="text-sm">${v.produtos?.nome || 'Produto'}</span></div>
+                <div class="flex justify-between mt-2 text-sm"><span>Valor: R$ ${v.valor_pago.toFixed(2)}</span><span class="text-green-600 font-bold">Lucro: R$ ${v.lucro_liquido.toFixed(2)}</span></div>
+            </div>
         `).join('');
     }
 
-    // Inicialização
-    document.getElementById('filtro-mes')?.addEventListener('change', () => carregarHistorico());
-    window.onload = () => {
-        showTab('dash');
-    };
+    document.getElementById('filtro-mes')?.addEventListener('change', () => carregarHistoricoMobile());
+    window.onload = () => showTab('dash');
 </script>
 </body>
 </html>
