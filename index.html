@@ -20,7 +20,7 @@
 <body class="bg-gray-50">
 
 <div class="flex min-h-screen relative">
-    <!-- Sidebar Desktop e Mobile -->
+    <!-- Sidebar -->
     <aside id="sidebar" class="fixed md:relative inset-y-0 left-0 z-40 w-64 bg-boticario-green text-white transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col shadow-2xl">
         <div class="p-6 border-b border-white/10 flex justify-between items-center">
             <div>
@@ -52,7 +52,7 @@
         <div class="p-4 md:p-8">
             <!-- Aba Dashboard -->
             <section id="tab-dash" class="tab-content">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-boticario-green">
                         <p class="text-gray-400 text-xs font-bold uppercase mb-1">Lucro Total (Geral)</p>
                         <h3 id="dash-lucro-total" class="text-2xl font-black text-boticario-green">R$ 0,00</h3>
@@ -65,31 +65,26 @@
                         <p class="text-gray-400 text-xs font-bold uppercase mb-1">Total de Vendas</p>
                         <h3 id="dash-vendas-count" class="text-2xl font-black text-gray-800">0</h3>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-l-blue-600">
-                        <p class="text-gray-400 text-xs font-bold uppercase mb-1">Valor em Estoque</p>
-                        <h3 id="dash-estoque" class="text-2xl font-black text-blue-800">R$ 0,00</h3>
-                    </div>
                 </div>
                 <div class="bg-white p-6 rounded-2xl shadow-sm">
                     <h3 class="font-bold text-boticario-green mb-2">💡 Capital para reinvestir</h3>
-                    <p class="text-gray-600">Seu lucro acumulado é o recurso disponível para comprar novos produtos. <strong>Mantenha o estoque saudável!</strong></p>
+                    <p class="text-gray-600">Seu lucro acumulado é o recurso disponível para comprar novos produtos diretamente na loja. <strong>Mantenha o controle!</strong></p>
                 </div>
             </section>
 
-            <!-- Aba Catálogo -->
+            <!-- Aba Catálogo (sem estoque) -->
             <section id="tab-catalogo" class="tab-content hidden">
                 <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
                     <h2 class="text-2xl font-bold text-boticario-green">📦 Meus Produtos</h2>
                     <button onclick="toggleModal('modal-produto')" class="bg-boticario-green text-white px-6 py-2 rounded-full font-bold shadow-md hover:bg-boticario-dark transition flex items-center gap-2"><i class="ri-add-line"></i> Novo Produto</button>
                 </div>
                 <div class="bg-white rounded-2xl shadow-sm border overflow-x-auto">
-                    <table class="w-full text-left min-w-[600px]">
+                    <table class="w-full text-left min-w-[500px]">
                         <thead class="bg-gray-50 border-b">
                             <tr>
                                 <th class="p-4 text-xs font-bold text-gray-500 uppercase">Produto</th>
                                 <th class="p-4 text-xs font-bold text-gray-500 uppercase">Custo (R$)</th>
                                 <th class="p-4 text-xs font-bold text-gray-500 uppercase">Venda Sugerida</th>
-                                <th class="p-4 text-xs font-bold text-gray-500 uppercase">Estoque</th>
                                 <th class="p-4 text-xs font-bold text-gray-500 uppercase">Ações</th>
                             </tr>
                         </thead>
@@ -168,14 +163,13 @@
     </main>
 </div>
 
-<!-- Modal Novo Produto -->
+<!-- Modal Novo Produto (sem estoque) -->
 <div id="modal-produto" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
     <div class="bg-white w-full max-w-md p-6 rounded-3xl">
         <h3 class="text-xl font-bold text-boticario-green mb-4">➕ Adicionar ao Catálogo</h3>
         <input type="text" id="new-nome" placeholder="Nome do produto (ex: Malbec 100ml)" class="w-full p-3 border rounded-xl mb-3">
         <input type="number" id="new-custo" placeholder="Preço de custo (R$)" class="w-full p-3 border rounded-xl mb-3">
-        <input type="number" id="new-venda" placeholder="Preço de venda sugerido (R$)" class="w-full p-3 border rounded-xl mb-3">
-        <input type="number" id="new-estoque" value="1" placeholder="Estoque inicial" class="w-full p-3 border rounded-xl mb-5">
+        <input type="number" id="new-venda" placeholder="Preço de venda sugerido (R$)" class="w-full p-3 border rounded-xl mb-5">
         <div class="flex gap-3">
             <button onclick="salvarProduto()" class="flex-1 bg-boticario-green text-white p-3 rounded-xl font-bold">Salvar</button>
             <button onclick="toggleModal('modal-produto')" class="flex-1 bg-gray-100 p-3 rounded-xl">Cancelar</button>
@@ -183,14 +177,19 @@
     </div>
 </div>
 
-<!-- Modal Dados do Cliente -->
+<!-- Modal Dados do Cliente com botão SAIR -->
 <div id="modal-venda" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white w-full max-w-md p-6 rounded-3xl">
+    <div class="bg-white w-full max-w-md p-6 rounded-3xl relative">
+        <!-- Botão X para fechar -->
+        <button onclick="toggleModal('modal-venda')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
         <h3 class="text-xl font-bold text-boticario-green">🧾 Finalizar Venda</h3>
         <p class="text-sm text-gray-500 mb-4">Produto: <span id="venda-confirm-nome" class="font-semibold"></span></p>
         <input type="text" id="cli-nome" placeholder="Nome completo do cliente" class="w-full p-3 border rounded-xl mb-3">
         <input type="text" id="cli-tel" placeholder="WhatsApp (opcional)" class="w-full p-3 border rounded-xl mb-5">
-        <button onclick="executarVenda()" class="w-full bg-boticario-green text-white p-3 rounded-xl font-bold">Registrar Venda</button>
+        <div class="flex gap-3">
+            <button onclick="executarVenda()" class="flex-1 bg-boticario-green text-white p-3 rounded-xl font-bold">Registrar Venda</button>
+            <button onclick="toggleModal('modal-venda')" class="flex-1 bg-gray-100 p-3 rounded-xl font-bold">Sair</button>
+        </div>
     </div>
 </div>
 
@@ -200,7 +199,6 @@
     const SUPABASE_KEY = 'sb_publishable_pR7Wszc24UxF6hO7fNH4tQ_1iV95lbB';
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Variáveis globais
     let produtosGlobal = [];
 
     // Utilitários
@@ -224,7 +222,6 @@
     // ========== DASHBOARD ==========
     async function carregarDashboard() {
         const { data: vendas } = await supabaseClient.from('vendas').select('lucro_liquido, data_venda');
-        const { data: produtos } = await supabaseClient.from('produtos').select('preco_custo, estoque');
         
         let lucroTotal = 0, lucroMes = 0;
         const agora = new Date();
@@ -239,23 +236,19 @@
             }
         });
 
-        let valorEstoque = 0;
-        produtos?.forEach(p => valorEstoque += p.preco_custo * p.estoque);
-
         document.getElementById('dash-lucro-total').innerText = `R$ ${lucroTotal.toFixed(2)}`;
         document.getElementById('dash-lucro-mes').innerText = `R$ ${lucroMes.toFixed(2)}`;
         document.getElementById('dash-vendas-count').innerText = vendas?.length || 0;
-        document.getElementById('dash-estoque').innerText = `R$ ${valorEstoque.toFixed(2)}`;
     }
 
-    // ========== CATÁLOGO ==========
+    // ========== CATÁLOGO (sem estoque) ==========
     async function carregarCatalogo() {
         const { data, error } = await supabaseClient.from('produtos').select('*').order('nome');
         if (error) return alert('Erro ao carregar catálogo');
         produtosGlobal = data;
         const tbody = document.getElementById('lista-catalogo');
         if (!produtosGlobal.length) {
-            tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Nenhum produto cadastrado. Clique em "Novo Produto"</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Nenhum produto cadastrado. Clique em "Novo Produto"</td></tr>';
             return;
         }
         tbody.innerHTML = produtosGlobal.map(p => `
@@ -263,7 +256,6 @@
                 <td class="p-4 font-semibold text-boticario-green">${p.nome}</td>
                 <td class="p-4">R$ ${p.preco_custo.toFixed(2)}</td>
                 <td class="p-4">R$ ${p.preco_venda_sugerido.toFixed(2)}</td>
-                <td class="p-4">${p.estoque} un</td>
                 <td class="p-4">
                     <button onclick="excluirProduto(${p.id})" class="text-red-500 hover:text-red-700"><i class="ri-delete-bin-line"></i></button>
                 </td>
@@ -275,11 +267,10 @@
         const nome = document.getElementById('new-nome').value.trim();
         const custo = parseFloat(document.getElementById('new-custo').value);
         const venda = parseFloat(document.getElementById('new-venda').value);
-        const estoque = parseInt(document.getElementById('new-estoque').value);
-        if (!nome || isNaN(custo) || isNaN(venda) || isNaN(estoque)) return alert('Preencha todos os campos corretamente.');
+        if (!nome || isNaN(custo) || isNaN(venda)) return alert('Preencha todos os campos corretamente.');
         
         const { error } = await supabaseClient.from('produtos').insert([{
-            nome, preco_custo: custo, preco_venda_sugerido: venda, estoque
+            nome, preco_custo: custo, preco_venda_sugerido: venda
         }]);
         if (error) return alert('Erro ao salvar: ' + error.message);
         toggleModal('modal-produto');
@@ -288,7 +279,6 @@
         document.getElementById('new-nome').value = '';
         document.getElementById('new-custo').value = '';
         document.getElementById('new-venda').value = '';
-        document.getElementById('new-estoque').value = '1';
     }
 
     async function excluirProduto(id) {
@@ -306,7 +296,7 @@
             return;
         }
         select.innerHTML = '<option value="">-- Selecione --</option>' + 
-            produtosGlobal.map(p => `<option value="${p.id}">${p.nome} (custo R$ ${p.preco_custo.toFixed(2)} | estoque ${p.estoque})</option>`).join('');
+            produtosGlobal.map(p => `<option value="${p.id}">${p.nome} (custo R$ ${p.preco_custo.toFixed(2)})</option>`).join('');
         atualizarSimulacao();
     }
 
@@ -336,7 +326,7 @@
         document.getElementById('venda-confirm-nome').innerText = `${produto.nome} (${quantidade} un)`;
     }
 
-    // ========== VENDA ==========
+    // ========== VENDA (sem verificação de estoque) ==========
     async function executarVenda() {
         const produtoId = document.getElementById('sim-produto').value;
         if (!produtoId) return alert('Selecione um produto');
@@ -345,14 +335,12 @@
         
         const produto = produtosGlobal.find(p => p.id == produtoId);
         const quantidade = parseInt(document.getElementById('sim-quantidade').value);
-        if (produto.estoque < quantidade) return alert(`Estoque insuficiente! Disponível: ${produto.estoque}`);
-        
         const valorPago = parseFloat(document.getElementById('sim-venda').value) * quantidade;
         const custoUnitario = produto.preco_custo;
         const lucroLiq = parseFloat(document.getElementById('res-lucro').innerText.replace('R$ ', '').replace(',', '.'));
         const formaPagamento = document.getElementById('sim-parcelas').selectedOptions[0].innerText;
         
-        // Inserir venda
+        // Inserir venda (sem alterar estoque)
         const { error: vendaError } = await supabaseClient.from('vendas').insert([{
             produto_id: produtoId,
             cliente_nome: clienteNome,
@@ -363,21 +351,20 @@
             lucro_liquido: lucroLiq,
             forma_pagamento: formaPagamento
         }]);
-        if (vendaError) return alert('Erro ao registrar venda: ' + vendaError.message);
         
-        // Atualizar estoque
-        const novoEstoque = produto.estoque - quantidade;
-        await supabaseClient.from('produtos').update({ estoque: novoEstoque }).eq('id', produtoId);
+        if (vendaError) return alert('Erro ao registrar venda: ' + vendaError.message);
         
         alert('Venda registrada com sucesso!');
         toggleModal('modal-venda');
-        carregarCatalogo();
         carregarDashboard();
         carregarHistorico();
+        // Limpar campos do simulador
         document.getElementById('cli-nome').value = '';
         document.getElementById('cli-tel').value = '';
         document.getElementById('sim-venda').value = '';
         document.getElementById('sim-quantidade').value = '1';
+        document.getElementById('sim-produto').value = '';
+        atualizarSimulacao();
     }
 
     // ========== HISTÓRICO ==========
@@ -409,7 +396,7 @@
         `).join('');
     }
 
-    // Inicialização e eventos
+    // Inicialização
     document.getElementById('filtro-mes')?.addEventListener('change', () => carregarHistorico());
     window.onload = () => {
         showTab('dash');
